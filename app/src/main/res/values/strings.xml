@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">InventoryApp</string>
+    <string name="toast_problem_adding_product">Problem with adding a new product. </string>
+    <string name="toast_adding_product_ok">New product added. </string>
+
+
+    <string name="toast_updating_product_ok">Product information updated. </string>
+    <string name="toast_problem_updating_product">Problem with updating product information. </string>
+
+    <string name="toast_deleting_product_ok">Product deleted. </string>
+    <string name="toast_problem_deleting_product">Problem with deleting product. </string>
+
+    <string name="toast_quantity_0">Amount of products is already 0. </string>
+
+    <string name="order_subject">Order of a product:\u0020</string>
+    <string name="order_message_part1">Hi! \nThis is an order regarding product:\u0020</string>
+    <string name="order_message_part2">. We would like to have it more to our stock (current amount is\u0020</string>
+    <string name="order_message_part3">).\nAs agreed, the price is set to be\u0020</string>
+    <string name="order_message_part4"> €/ item. \n\nWith kind regards, Niina. </string>
+
+    <string name="toast_invalid_name">Value for product name is invalid. Input correct value to save. </string>
+    <string name="toast_invalid_brand">Value for product brand is invalid. Input correct value to save. </string>
+    <string name="toast_invalid_price">Value for product price is invalid. Input correct value to save. </string>
+    <string name="toast_invalid_quantity">Value for product quantity is invalid. Input correct value to save. </string>
+
+
+
+
+</resources>
