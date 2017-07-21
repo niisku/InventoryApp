@@ -215,8 +215,12 @@ public class EditorActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             //'Save' button clicked:
             case R.id.action_save:
-                saveProduct();
-                finish();
+                if (mProductHasChanged) {
+                    saveProduct();
+                } else {
+
+                    Toast.makeText(this, "Nothing changed", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             //'Delete' button clicked:
             case R.id.action_delete:
@@ -228,6 +232,7 @@ public class EditorActivity extends AppCompatActivity implements
                 //If no changes made:
                 if (!mProductHasChanged) {
                     NavUtils.navigateUpFromSameTask(EditorActivity.this);
+                    return true;
                 } else {
                     //If changes HAS BEEN made: onClickListener for user's responses
                     DialogInterface.OnClickListener discardButtonListener =
@@ -242,6 +247,7 @@ public class EditorActivity extends AppCompatActivity implements
                     //Dialog showed about unsaved changes:
                     showUnsavedChangesDialog(discardButtonListener);
                     return true;
+
                 }
         }
         return super.onOptionsItemSelected(item);
@@ -451,11 +457,11 @@ public class EditorActivity extends AppCompatActivity implements
             return false;
         }
 
-        if (TextUtils.isEmpty(priceString)) {
+        if (TextUtils.isEmpty(priceString) && (Double.valueOf(priceString)) <= 0.0) {
             Toast.makeText(this, getString(R.string.toast_invalid_price), Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (Integer.valueOf(quantityString) < 0) {
+        if (Integer.valueOf(quantityString) <= 0) {
             Toast.makeText(this, getString(R.string.toast_invalid_quantity), Toast.LENGTH_SHORT).show();
             return false;
         }
