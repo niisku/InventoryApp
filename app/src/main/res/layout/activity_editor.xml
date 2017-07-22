@@ -25,15 +25,11 @@
 
 
             <ImageView
-                android:id="@+id/image_image"
+                android:id="@+id/image_imageview"
                 android:layout_width="60dp"
-                android:layout_height="60dp" />
+                android:layout_height="60dp"
+                android:focusable="false" />
 
-            <Button
-                android:id="@+id/camera_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Take image" />
         </LinearLayout>
 
 
@@ -49,9 +45,9 @@
 
             <EditText
                 android:id="@+id/name_edittext"
-                android:inputType="textCapSentences"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences" />
 
         </LinearLayout>
 
@@ -68,9 +64,9 @@
 
             <EditText
                 android:id="@+id/brand_edittext"
-                android:inputType="textCapSentences"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences" />
 
         </LinearLayout>
 
@@ -89,8 +85,7 @@
                 android:id="@+id/price_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                />
+                android:inputType="numberDecimal" />
 
         </LinearLayout>
 
@@ -108,32 +103,30 @@
                 android:id="@+id/increment_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="+"/>
+                android:text="+" />
 
             <EditText
                 android:id="@+id/amount_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                />
+                android:inputType="number" />
 
             <Button
                 android:id="@+id/decrement_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="-"/>
+                android:text="-" />
 
         </LinearLayout>
 
 
         <Button
             android:id="@+id/submit_order_button"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send order email"/>
+            android:text="Send order email"
+            android:visibility="gone" />
 
 
-
-</LinearLayout>
+    </LinearLayout>
 </ScrollView>

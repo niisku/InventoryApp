@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 ProductEntry._ID,
                 ProductEntry.COLUMN_NAME,
                 ProductEntry.COLUMN_PRICE,
-                ProductEntry.COLUMN_QUANTITY
+                ProductEntry.COLUMN_QUANTITY,
         };
         //ContentManager's query:
         return new CursorLoader(this, ProductEntry.CONTENT_URI, projection, null, null, null);

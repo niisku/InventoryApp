@@ -25,8 +25,20 @@
         </activity>
         <provider
             android:name=".data.InventoryProvider"
-            android:authorities="com.example.android.inventoryapp"
+            android:authorities="com.example.android.inventory"
             android:exported="false" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths"></meta-data>
+        </provider>
+
+
     </application>
 
 </manifest>

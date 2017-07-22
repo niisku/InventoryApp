@@ -10,7 +10,10 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -19,7 +22,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static com.example.android.inventoryapp.data.InventoryContract.ProductEntry;
 
@@ -33,11 +42,15 @@ public class EditorActivity extends AppCompatActivity implements
 
     //Product data loader's id:
     private static final int EXISTING_PRODUCT_LOADER = 0;
+    static final int PRODUCT_IMAGE = 1;
+    Uri imageUri;
+    String currentPhotoPath;
+
+
     public int quantity;
     //Product's Content Uri; 'null' if new product:
     private Uri mCurrentProductUri;
     //EditText fields for the product's data; name, brand, price, quantity
-    //TODO add image too
     private EditText mNameEditText;
     private EditText mBrandEditText;
     private EditText mPriceEditText;
@@ -46,10 +59,13 @@ public class EditorActivity extends AppCompatActivity implements
     private Button mDecrementButton;
     private Button mOrderButton;
 
+    private ImageView mImageView;
+
     private String nameString;
     private String brandString;
     private Double priceString;
     private int quantityString;
+    private String imageString;
 
     //Checking if the product data is edited ('true' = yes, 'false' = no):
     private boolean mProductHasChanged = false;
@@ -96,12 +112,18 @@ public class EditorActivity extends AppCompatActivity implements
         mPriceEditText.setText("0");
         mQuantityEditText = (EditText) findViewById(R.id.amount_edittext);
         mQuantityEditText.setText("0");
+        mImageView = (ImageView) findViewById(R.id.image_imageview);
+
+        // Set placeholder image for image view
+        mImageView.setImageResource(R.drawable.image_placeholder);
+
 
         //Then add OnTouchListeners to know if the user has touched / edited them.
         mNameEditText.setOnTouchListener(mTouchListener);
         mBrandEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
+        mImageView.setOnTouchListener(mTouchListener);
 
         mIncrementButton = (Button) findViewById(R.id.increment_button);
         mDecrementButton = (Button) findViewById(R.id.decrement_button);
@@ -130,8 +152,57 @@ public class EditorActivity extends AppCompatActivity implements
                 }
             });
         }
+
+        /**
+         * on click listener for launching method to capture image
+         */
+        mImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // check there is a camera available
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    // create new image file
+                    File photoFile = null;
+
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException exception) {
+
+                    }
+                    if (photoFile != null) {
+                        imageUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.android.fileprovider", photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                        startActivityForResult(takePictureIntent, PRODUCT_IMAGE);
+                    }
+                }
+            }
+        });
+
     }
 
+    /**
+     * Create image file for each image
+     */
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMMMdd_hhmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (imageUri != null) {
+            mImageView.setImageURI(imageUri);
+        } else {
+            mImageView.setImageResource(R.drawable.image_placeholder);
+        }
+    }
 
     //Saving the product: Get user input & save it into db:
     private void saveProduct() {
@@ -144,54 +215,64 @@ public class EditorActivity extends AppCompatActivity implements
 
             int quantity = Integer.parseInt(mQuantityEditText.getText().toString().trim());
 
-            //ContentValues object: Column names = keys, values = editor's attributes:
-            ContentValues values = new ContentValues();
-            values.put(ProductEntry.COLUMN_NAME, nameString);
-            values.put(ProductEntry.COLUMN_BRAND, brandString);
-            values.put(ProductEntry.COLUMN_PRICE, priceString);
-            values.put(ProductEntry.COLUMN_QUANTITY, quantity);
-
-            //Checking if URI is null = new product:
-            if (mCurrentProductUri == null) {
-                //New product; insert new product into provider + return its cont.Uri:
-                Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
-                // Toast message of insertion successful / failed:
-                if (newUri == null) {
-                    // New product's URI = null = error with adding
-                    Toast.makeText(this, getString(R.string.toast_problem_adding_product),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, getString(R.string.toast_adding_product_ok),
-                            Toast.LENGTH_SHORT).show();
-                }
-
+            if (imageUri != null) {
+                imageString = imageUri.toString();
             } else {
-                //This is when URI is not null = product is existing.
-                //Therefore updating it with content uri; mCurrentProductUri + new values
-                int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
+                imageString = null;
+                mImageView.setImageResource(R.drawable.image_placeholder);
 
-                // Toast message of update being successful / failed:
-                if (rowsAffected == 0) {
-                    // Updated product's rows nonchanged = null = error with updating
-                    Toast.makeText(this, getString(R.string.toast_problem_updating_product),
-                            Toast.LENGTH_SHORT).show();
+
+                //ContentValues object: Column names = keys, values = editor's attributes:
+                ContentValues values = new ContentValues();
+                values.put(ProductEntry.COLUMN_NAME, nameString);
+                values.put(ProductEntry.COLUMN_BRAND, brandString);
+                values.put(ProductEntry.COLUMN_PRICE, priceString);
+                values.put(ProductEntry.COLUMN_QUANTITY, quantity);
+                values.put(ProductEntry.COLUMN_IMAGE, imageString);
+
+                //Checking if URI is null = new product:
+                if (mCurrentProductUri == null) {
+                    //New product; insert new product into provider + return its cont.Uri:
+                    Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
+                    // Toast message of insertion successful / failed:
+                    if (newUri == null) {
+                        // New product's URI = null = error with adding
+                        Toast.makeText(this, getString(R.string.toast_problem_adding_product),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, getString(R.string.toast_adding_product_ok),
+                                Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
-                    Toast.makeText(this, getString(R.string.toast_updating_product_ok),
-                            Toast.LENGTH_SHORT).show();
+                    //This is when URI is not null = product is existing.
+                    //Therefore updating it with content uri; mCurrentProductUri + new values
+                    int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
+
+                    // Toast message of update being successful / failed:
+                    if (rowsAffected == 0) {
+                        // Updated product's rows nonchanged = null = error with updating
+                        Toast.makeText(this, getString(R.string.toast_problem_updating_product),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, getString(R.string.toast_updating_product_ok),
+                                Toast.LENGTH_SHORT).show();
+
+                    }
 
                 }
+                finish();
 
             }
-            finish();
 
         }
-
     }
 
     // Adding menu items to the bar (save & delete):
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
+        getMenuInflater().inflate(R.menu.menu_editor,
+                menu);
         return true;
     }
 
@@ -217,6 +298,7 @@ public class EditorActivity extends AppCompatActivity implements
             case R.id.action_save:
                 if (mProductHasChanged) {
                     saveProduct();
+
                 } else {
 
                     Toast.makeText(this, "Nothing changed", Toast.LENGTH_SHORT).show();
@@ -341,14 +423,14 @@ public class EditorActivity extends AppCompatActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        //TODO add image part!
         //Editor has all the attributes, therefore projection will have too:
         String[] projection = {
                 ProductEntry._ID,
                 ProductEntry.COLUMN_NAME,
                 ProductEntry.COLUMN_BRAND,
                 ProductEntry.COLUMN_PRICE,
-                ProductEntry.COLUMN_QUANTITY};
+                ProductEntry.COLUMN_QUANTITY,
+                ProductEntry.COLUMN_IMAGE};
         //Loader that executes ContentProvider's query method on a background thread:
         return new CursorLoader(this, mCurrentProductUri, projection, null, null, null);
     }
@@ -362,25 +444,37 @@ public class EditorActivity extends AppCompatActivity implements
             return;
         }
         //Data exists. Now starting to read data from the cursor:
-        //TODO add image part!
         if (cursor.moveToFirst()) {
             //Finding the columns:
             int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_NAME);
             int brandColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_BRAND);
             int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_QUANTITY);
+            int imageColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_IMAGE);
+
 
             //Extract their values:
             String name = cursor.getString(nameColumnIndex);
             String brand = cursor.getString(brandColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
+            String image = cursor.getString(imageColumnIndex);
 
             //Update the fields with their data:
             mNameEditText.setText(name);
             mBrandEditText.setText(brand);
             mPriceEditText.setText(Double.toString(price));
             mQuantityEditText.setText(Integer.toString(quantity));
+
+            // null exception for image; update if image provided
+            if (image != null) {
+                imageUri = Uri.parse(image);
+                mImageView.setImageURI(imageUri);
+            } else {
+                mImageView.setImageResource(R.drawable.image_placeholder);
+            }
+
+
         }
     }
 
@@ -445,7 +539,6 @@ public class EditorActivity extends AppCompatActivity implements
         String priceString = mPriceEditText.getText().toString().trim();
 
         String quantityString = mQuantityEditText.getText().toString().trim();
-        //TODO do image part!
 
         if (TextUtils.isEmpty(nameString)) {
             Toast.makeText(this, getString(R.string.toast_invalid_name), Toast.LENGTH_SHORT).show();
@@ -457,11 +550,11 @@ public class EditorActivity extends AppCompatActivity implements
             return false;
         }
 
-        if (TextUtils.isEmpty(priceString) && (Double.valueOf(priceString)) <= 0.0) {
+        if (TextUtils.isEmpty(priceString) || (Double.valueOf(priceString)) <= 0.0) {
             Toast.makeText(this, getString(R.string.toast_invalid_price), Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (Integer.valueOf(quantityString) <= 0) {
+        if (TextUtils.isEmpty(quantityString) || Integer.valueOf(quantityString) <= 0) {
             Toast.makeText(this, getString(R.string.toast_invalid_quantity), Toast.LENGTH_SHORT).show();
             return false;
         }

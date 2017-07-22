@@ -144,8 +144,10 @@ public class InventoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Product's price is missing or below 0. ");
         }
 
-        //TODO Check the image's values!
-
+        String image = values.getAsString(ProductEntry.COLUMN_IMAGE);
+        if (image == null) {
+            throw new IllegalArgumentException("Product's image is missing. ");
+        }
         //Get writable db:
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         //Inserting a new product with its values:
@@ -246,8 +248,10 @@ public class InventoryProvider extends ContentProvider {
                 throw new IllegalArgumentException("Product's price is missing or below 0. ");
             }
         }
-        //TODO check the image's key too!
-
+        String image = values.getAsString(ProductEntry.COLUMN_IMAGE);
+        if (image == null) {
+            throw new IllegalArgumentException("Product's image is missing. ");
+        }
         //If no values to update (= 0 rows affected), no updating happens:
         if (values.size() == 0) {
             return 0;

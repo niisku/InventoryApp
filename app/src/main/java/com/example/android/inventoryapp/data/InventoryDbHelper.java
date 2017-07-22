@@ -25,14 +25,15 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //String that contains the SQL statement to create the pets table:
 
-        //TODO add image URI too later!
 
         String SQL_CREATE_TABLE = "CREATE TABLE " + ProductEntry.TABLE_NAME +
                 " (" + ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ProductEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                 ProductEntry.COLUMN_BRAND + " TEXT NOT NULL, " +
                 ProductEntry.COLUMN_PRICE + " REAL NOT NULL, " +
-                ProductEntry.COLUMN_QUANTITY + " INTEGER NOT NULL);";
+                ProductEntry.COLUMN_QUANTITY + " INTEGER NOT NULL, " +
+                ProductEntry.COLUMN_IMAGE + " TEXT NOT NULL);";
+
 
         db.execSQL(SQL_CREATE_TABLE);
 

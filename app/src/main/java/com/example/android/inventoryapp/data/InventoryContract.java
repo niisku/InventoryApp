@@ -11,9 +11,9 @@ import android.provider.BaseColumns;
 public class InventoryContract {
 
     //For the Content Provider:
-    public static final String CONTENT_AUTHORITY = "com.example.android.inventoryapp";
+    public static final String CONTENT_AUTHORITY = "com.example.android.inventory";
 
-    //The scheme; will be shared by every URI associated with PetContract:
+    //The scheme; will be shared by every URI associated with InventoryContract:
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     //Path for each of the tables:
@@ -32,7 +32,7 @@ public class InventoryContract {
         public static final String COLUMN_BRAND = "brand";
         public static final String COLUMN_PRICE = "price";
         public static final String COLUMN_QUANTITY = "quantity";
-        public static final String COLUMN_IMG_URI = "imageUri";
+        public static final String COLUMN_IMAGE = "image";
 
 
         //A full URI for the class:
