@@ -40,14 +40,12 @@ import static com.example.android.inventoryapp.data.InventoryContract.ProductEnt
 public class EditorActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
+    static final int PRODUCT_IMAGE = 1;
     //Product data loader's id:
     private static final int EXISTING_PRODUCT_LOADER = 0;
-    static final int PRODUCT_IMAGE = 1;
+    public int quantity;
     Uri imageUri;
     String currentPhotoPath;
-
-
-    public int quantity;
     //Product's Content Uri; 'null' if new product:
     private Uri mCurrentProductUri;
     //EditText fields for the product's data; name, brand, price, quantity
@@ -58,15 +56,8 @@ public class EditorActivity extends AppCompatActivity implements
     private Button mIncrementButton;
     private Button mDecrementButton;
     private Button mOrderButton;
-
     private ImageView mImageView;
-
-    private String nameString;
-    private String brandString;
-    private Double priceString;
-    private int quantityString;
     private String imageString;
-
     //Checking if the product data is edited ('true' = yes, 'false' = no):
     private boolean mProductHasChanged = false;
 
@@ -78,7 +69,6 @@ public class EditorActivity extends AppCompatActivity implements
             return false;
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +83,12 @@ public class EditorActivity extends AppCompatActivity implements
 
         //So following = new product in question:
         if (mCurrentProductUri == null) {
-            setTitle("Add a product");
+            setTitle(getString(R.string.title_add_product));
             //Hiding options menu_editor:
             invalidateOptionsMenu();
         } else {
             //And here editing an existing product:
-            setTitle("Edit product");
+            setTitle(getString(R.string.title_edit_product));
 
             //Initializing loader to read the product's data & display values in the editor:
             getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER, null, this);
@@ -117,17 +107,16 @@ public class EditorActivity extends AppCompatActivity implements
         // Set placeholder image for image view
         mImageView.setImageResource(R.drawable.image_placeholder);
 
-
         //Then add OnTouchListeners to know if the user has touched / edited them.
         mNameEditText.setOnTouchListener(mTouchListener);
         mBrandEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
         mImageView.setOnTouchListener(mTouchListener);
-
+        //Initializing the '+' and '-' buttons
         mIncrementButton = (Button) findViewById(R.id.increment_button);
         mDecrementButton = (Button) findViewById(R.id.decrement_button);
-
+        //Adding their onClickListeners
         mIncrementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,19 +142,16 @@ public class EditorActivity extends AppCompatActivity implements
             });
         }
 
-        /**
-         * on click listener for launching method to capture image
-         */
+        //Setting onClickListener for image
         mImageView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // check there is a camera available
+                // Check if there is a camera available
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    // create new image file
+                    // Create new image file
                     File photoFile = null;
-
                     try {
                         photoFile = createImageFile();
                     } catch (IOException exception) {
@@ -182,9 +168,7 @@ public class EditorActivity extends AppCompatActivity implements
 
     }
 
-    /**
-     * Create image file for each image
-     */
+    //Creating the image file for each image
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMMMdd_hhmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
@@ -212,59 +196,48 @@ public class EditorActivity extends AppCompatActivity implements
             String nameString = mNameEditText.getText().toString().trim();
             String brandString = mBrandEditText.getText().toString().trim();
             Double priceString = Double.parseDouble(mPriceEditText.getText().toString().trim());
-
             int quantity = Integer.parseInt(mQuantityEditText.getText().toString().trim());
+            imageString = imageUri.toString();
 
-            if (imageUri != null) {
-                imageString = imageUri.toString();
-            } else {
-                imageString = null;
-                mImageView.setImageResource(R.drawable.image_placeholder);
+            //ContentValues object: Column names = keys, values = editor's attributes:
+            ContentValues values = new ContentValues();
+            values.put(ProductEntry.COLUMN_NAME, nameString);
+            values.put(ProductEntry.COLUMN_BRAND, brandString);
+            values.put(ProductEntry.COLUMN_PRICE, priceString);
+            values.put(ProductEntry.COLUMN_QUANTITY, quantity);
+            values.put(ProductEntry.COLUMN_IMAGE, imageString);
 
-
-                //ContentValues object: Column names = keys, values = editor's attributes:
-                ContentValues values = new ContentValues();
-                values.put(ProductEntry.COLUMN_NAME, nameString);
-                values.put(ProductEntry.COLUMN_BRAND, brandString);
-                values.put(ProductEntry.COLUMN_PRICE, priceString);
-                values.put(ProductEntry.COLUMN_QUANTITY, quantity);
-                values.put(ProductEntry.COLUMN_IMAGE, imageString);
-
-                //Checking if URI is null = new product:
-                if (mCurrentProductUri == null) {
-                    //New product; insert new product into provider + return its cont.Uri:
-                    Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
-                    // Toast message of insertion successful / failed:
-                    if (newUri == null) {
-                        // New product's URI = null = error with adding
-                        Toast.makeText(this, getString(R.string.toast_problem_adding_product),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, getString(R.string.toast_adding_product_ok),
-                                Toast.LENGTH_SHORT).show();
-                    }
-
+            //Checking if URI is null = new product:
+            if (mCurrentProductUri == null) {
+                //New product; insert new product into provider + return its cont.Uri:
+                Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
+                // Toast message of insertion successful / failed:
+                if (newUri == null) {
+                    // New product's URI = null = error with adding
+                    Toast.makeText(this, getString(R.string.toast_problem_adding_product),
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    //This is when URI is not null = product is existing.
-                    //Therefore updating it with content uri; mCurrentProductUri + new values
-                    int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
+                    Toast.makeText(this, getString(R.string.toast_adding_product_ok),
+                            Toast.LENGTH_SHORT).show();
+                }
 
-                    // Toast message of update being successful / failed:
-                    if (rowsAffected == 0) {
-                        // Updated product's rows nonchanged = null = error with updating
-                        Toast.makeText(this, getString(R.string.toast_problem_updating_product),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, getString(R.string.toast_updating_product_ok),
-                                Toast.LENGTH_SHORT).show();
+            } else {
+                //This is when URI is not null = product is existing.
+                //Therefore updating it with content uri; mCurrentProductUri + new values
+                int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
 
-                    }
+                // Toast message of update being successful / failed:
+                if (rowsAffected == 0) {
+                    // Updated product's rows nonchanged = null = error with updating
+                    Toast.makeText(this, getString(R.string.toast_problem_updating_product),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getString(R.string.toast_updating_product_ok),
+                            Toast.LENGTH_SHORT).show();
 
                 }
-                finish();
-
             }
-
+            finish();
         }
     }
 
@@ -276,9 +249,8 @@ public class EditorActivity extends AppCompatActivity implements
         return true;
     }
 
-//Called after 'invalidateOptionsMenu();
-    //Some items to visible/invisible
-
+    //Called after 'invalidateOptionsMenu();
+    //Setting some items visible/invisible
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -298,10 +270,8 @@ public class EditorActivity extends AppCompatActivity implements
             case R.id.action_save:
                 if (mProductHasChanged) {
                     saveProduct();
-
                 } else {
-
-                    Toast.makeText(this, "Nothing changed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_nothing_changed, Toast.LENGTH_SHORT).show();
                 }
                 return true;
             //'Delete' button clicked:
@@ -319,7 +289,6 @@ public class EditorActivity extends AppCompatActivity implements
                     //If changes HAS BEEN made: onClickListener for user's responses
                     DialogInterface.OnClickListener discardButtonListener =
                             new DialogInterface.OnClickListener() {
-
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     //'Discard' button clicked:
@@ -329,7 +298,6 @@ public class EditorActivity extends AppCompatActivity implements
                     //Dialog showed about unsaved changes:
                     showUnsavedChangesDialog(discardButtonListener);
                     return true;
-
                 }
         }
         return super.onOptionsItemSelected(item);
@@ -338,7 +306,6 @@ public class EditorActivity extends AppCompatActivity implements
     //'Back' button clicked:
     @Override
     public void onBackPressed() {
-
         //No changes made:
         if (!mProductHasChanged) {
             super.onBackPressed();
@@ -354,17 +321,14 @@ public class EditorActivity extends AppCompatActivity implements
                 };
         //Dialog showed about unsaved changes:
         showUnsavedChangesDialog(discardButtonClickListener);
-
-
     }
 
     //Dialog about unsaved changes with 'discardButtonClickListener':
-
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("There are unsaved changes; are you sure you want to exit editing without saving? ");
-        builder.setPositiveButton("Discard", discardButtonClickListener);
-        builder.setNegativeButton("Keep editing", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.dialog_unsaved_changes);
+        builder.setPositiveButton(R.string.dialog_discard, discardButtonClickListener);
+        builder.setNegativeButton(R.string.dialog_keep_editing, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //'Keep editing' button clicked:
                 if (dialog != null) {
@@ -381,14 +345,14 @@ public class EditorActivity extends AppCompatActivity implements
     private void showDeleteConfirmationDialog() {
         //Create and show the AlertDialog:
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Delete product? ");
-        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.dialog_delete_product);
+        builder.setPositiveButton(R.string.dialog_delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //'Delete' button clicked:
                 deleteProduct();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //'Cancel' button clicked: Continue editing:
                 if (dialog != null) {
@@ -418,7 +382,6 @@ public class EditorActivity extends AppCompatActivity implements
         // Close the activity:
         finish();
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -452,7 +415,6 @@ public class EditorActivity extends AppCompatActivity implements
             int quantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_QUANTITY);
             int imageColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_IMAGE);
 
-
             //Extract their values:
             String name = cursor.getString(nameColumnIndex);
             String brand = cursor.getString(brandColumnIndex);
@@ -473,8 +435,6 @@ public class EditorActivity extends AppCompatActivity implements
             } else {
                 mImageView.setImageResource(R.drawable.image_placeholder);
             }
-
-
         }
     }
 
@@ -485,10 +445,7 @@ public class EditorActivity extends AppCompatActivity implements
         mBrandEditText.setText("");
         mPriceEditText.setText("");
         mQuantityEditText.setText("");
-
-
     }
-
 
     public void increment() {
         quantity = Integer.valueOf(mQuantityEditText.getText().toString());
@@ -527,9 +484,7 @@ public class EditorActivity extends AppCompatActivity implements
         intent.putExtra(Intent.EXTRA_TEXT, message);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
-
         }
-
     }
 
     public boolean checkInputsOk() {
@@ -558,6 +513,16 @@ public class EditorActivity extends AppCompatActivity implements
             Toast.makeText(this, getString(R.string.toast_invalid_quantity), Toast.LENGTH_SHORT).show();
             return false;
         }
+        if (TextUtils.isEmpty(quantityString) || Integer.valueOf(quantityString) <= 0) {
+            Toast.makeText(this, getString(R.string.toast_invalid_quantity), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (imageUri == null) {
+            Toast.makeText(this, getString(R.string.toast_invalid_image), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         return true;
     }
 }

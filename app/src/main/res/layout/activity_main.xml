@@ -3,41 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/cupboard_1"
     tools:context="com.example.android.inventoryapp.MainActivity">
 
     <ListView
         android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="20dp"
-        android:padding="16dp">
-
-    </ListView>
+        style="@style/list_view_style"></ListView>
 
     <Button
         android:id="@+id/add_new_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:text="Add Item" />
+        style="@style/add_item_button"
+        android:text="@string/add_item_button" />
 
     <RelativeLayout
         android:id="@+id/empty_view"
-               android:layout_centerInParent="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
         <TextView
             android:id="@+id/empty_view_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No items; press button below to add an item. "
-            />
+            android:text="@string/empty_view_string"
+            android:textAlignment="center"
+            android:textAppearance="?android:textAppearanceMedium" />
     </RelativeLayout>
-
 
 </RelativeLayout>

@@ -1,29 +1,48 @@
 <resources>
     <string name="app_name">InventoryApp</string>
+
     <string name="toast_problem_adding_product">Problem with adding a new product. </string>
     <string name="toast_adding_product_ok">New product added. </string>
-
-
     <string name="toast_updating_product_ok">Product information updated. </string>
     <string name="toast_problem_updating_product">Problem with updating product information. </string>
-
     <string name="toast_deleting_product_ok">Product deleted. </string>
     <string name="toast_problem_deleting_product">Problem with deleting product. </string>
-
     <string name="toast_quantity_0">Amount of products is already 0. </string>
 
     <string name="order_subject">Order of a product:\u0020</string>
     <string name="order_message_part1">Hi! \nThis is an order regarding product:\u0020</string>
     <string name="order_message_part2">. We would like to have it more to our stock (current amount is\u0020</string>
     <string name="order_message_part3">).\nAs agreed, the price is set to be\u0020</string>
-    <string name="order_message_part4"> €/ item. \n\nWith kind regards, Niina. </string>
+    <string name="order_message_part4">\u0020€/ item. \n\nWith kind regards, Niina. </string>
 
     <string name="toast_invalid_name">Value for product name is invalid. Input correct value to save. </string>
     <string name="toast_invalid_brand">Value for product brand is invalid. Input correct value to save. </string>
     <string name="toast_invalid_price">Value for product price is invalid. Input correct value to save. </string>
     <string name="toast_invalid_quantity">Value for product quantity is invalid. Input correct value to save. </string>
+    <string name="toast_invalid_image">There is no product image. Input an image to save. </string>
 
+    <string name="title_add_product">Add a product</string>
+    <string name="title_edit_product">Edit product</string>
 
+    <string name="toast_nothing_changed">Nothing was changed. </string>
+    <string name="dialog_unsaved_changes">There are unsaved changes; are you sure you want to exit editing without saving? </string>
+    <string name="dialog_discard">Discard</string>
+    <string name="dialog_keep_editing">Keep editing</string>
+    <string name="dialog_delete_product">Delete product? </string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_cancel">Cancel</string>
 
+    <string name="quantity_title">Quantity:</string>
+    <string name="send_email_string">Send order email</string>
+    <string name="price_title">Price:</string>
+    <string name="brand_title">Brand:</string>
+    <string name="name_title">Name:</string>
+    <string name="add_item_button">Add Item</string>
+    <string name="empty_view_string">There are no items; \npress button below.</string>
+    <string name="euro_title">€</string>
+    <string name="pcs_string">pcs</string>
+    <string name="jar_string">Sell  1</string>
+    <string name="bar_save">Save</string>
+    <string name="bar_delete">Delete</string>
 
 </resources>

@@ -16,7 +16,6 @@ import android.widget.ListView;
 
 import static com.example.android.inventoryapp.data.InventoryContract.ProductEntry;
 
-
 //Displays the stored items:
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -84,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 ProductEntry.COLUMN_NAME,
                 ProductEntry.COLUMN_PRICE,
                 ProductEntry.COLUMN_QUANTITY,
+                ProductEntry.COLUMN_IMAGE
         };
         //ContentManager's query:
         return new CursorLoader(this, ProductEntry.CONTENT_URI, projection, null, null, null);

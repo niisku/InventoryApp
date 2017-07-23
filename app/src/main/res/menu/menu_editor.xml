@@ -5,13 +5,11 @@
 
     <item
         android:id="@+id/action_save"
-        android:title="Save"
-
-        android:icon="@drawable/ic_action_save"
+        android:title="@string/bar_save"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_delete"
-        android:title="Delete"
+        android:title="@string/bar_delete"
         app:showAsAction="always" />
 </menu>

@@ -16,7 +16,6 @@ import static com.example.android.inventoryapp.data.InventoryContract.ProductEnt
  * Created by Niina on 18.7.2017.
  */
 
-
 public class InventoryProvider extends ContentProvider {
 
     public static final String LOG_TAG = ProductEntry.class.getSimpleName();
@@ -31,10 +30,9 @@ public class InventoryProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-
+        //Uri matcher codes:
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_PRODUCTS, PRODUCTS);
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_PRODUCTS + "/#", PRODUCT_ID);
-
     }
 
     //Db helper object:
@@ -46,26 +44,21 @@ public class InventoryProvider extends ContentProvider {
         return true;
     }
 
-
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         //Set db to readable:
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
         //Query results:
         Cursor cursor;
-
         //Checking the match for query; to the whole table, to a single item, or none.
         int match = sUriMatcher.match(uri);
 
         switch (match) {
-
             case PRODUCTS:
                 //Code for whole table:
                 cursor = db.query(ProductEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case PRODUCT_ID:
-
                 //1st: Extract the ID; will be the 'selection' = '_id=?':
                 selection = ProductEntry._ID + "=?";
                 //2nd: Selection argument: String array of value of the '?':
@@ -75,13 +68,11 @@ public class InventoryProvider extends ContentProvider {
                 //Same as before, but now more 'detailed'; with seletion & selectionArgs:
                 cursor = db.query(ProductEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
-
             //If match is not found to either of above:
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
 
         }
-
         // Set notification URI on the Cursor,
         // so we know what content URI the Cursor was created for.
         // If the data at this URI changes, then we know we need to update the Cursor.
@@ -89,7 +80,6 @@ public class InventoryProvider extends ContentProvider {
         // Return the cursor = the queried results:
         return cursor;
     }
-
 
     @Override
     public String getType(Uri uri) {
@@ -248,9 +238,11 @@ public class InventoryProvider extends ContentProvider {
                 throw new IllegalArgumentException("Product's price is missing or below 0. ");
             }
         }
-        String image = values.getAsString(ProductEntry.COLUMN_IMAGE);
-        if (image == null) {
-            throw new IllegalArgumentException("Product's image is missing. ");
+        if (values.containsKey(ProductEntry.COLUMN_IMAGE)) {
+            String image = values.getAsString(ProductEntry.COLUMN_IMAGE);
+            if (image == null) {
+                throw new IllegalArgumentException("Product's image is missing. ");
+            }
         }
         //If no values to update (= 0 rows affected), no updating happens:
         if (values.size() == 0) {

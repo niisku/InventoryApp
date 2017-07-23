@@ -2,84 +2,92 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="100dp"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:descendantFocusability="blocksDescendants">
+    android:paddingTop="4dp">
+
+    <TextView
+        android:id="@+id/name_data_textview_main"
+        style="@style/list_item_textviews"
+        android:textAllCaps="true"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textStyle="bold"
+        android:textColor="@color/colorBrown"/>
 
     <LinearLayout
-        android:id="@+id/nameprice_label_container"
+        android:id="@+id/listview_all"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/listview_all_textviews"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name" />
+            android:layout_gravity="bottom"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Price" />
+            <LinearLayout
+                android:id="@+id/nameprice_data_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-    </LinearLayout>
+                <TextView
+                    style="@style/list_item_textviews"
+                    android:text="@string/euro_title"
+                    android:textAppearance="?android:textAppearanceMedium" />
 
-    <LinearLayout
-        android:id="@+id/nameprice_data_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/price_data_textview_main"
+                    style="@style/list_item_textviews"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/name_data_textview_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/price_data_textview_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <LinearLayout
+                android:id="@+id/amountsale_label_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
 
-    </LinearLayout>
+                <TextView
+                    style="@style/list_item_textviews"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/pcs_string"
+                    android:textAppearance="?android:textAppearanceMedium" />
 
-    <LinearLayout
-        android:id="@+id/amountsale_label_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/amount_data_textview_main"
+                    style="@style/list_item_textviews"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="bottom"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Amount" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sale" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/amountprice_edittext_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/amount_data_textview_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/sale_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sell 1" />
-
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="90dp"
+            android:layout_height="70dp"
+            android:layout_gravity="end"
+            android:background="@drawable/jar_2"
+            android:text="@string/jar_string"
+            android:textAlignment="center" />
 
     </LinearLayout>
+
+    <View style="@style/list_item_divider" />
 
 </LinearLayout>
