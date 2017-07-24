@@ -116,6 +116,9 @@ public class EditorActivity extends AppCompatActivity implements
         //Initializing the '+' and '-' buttons
         mIncrementButton = (Button) findViewById(R.id.increment_button);
         mDecrementButton = (Button) findViewById(R.id.decrement_button);
+        mIncrementButton.setOnTouchListener(mTouchListener);
+        mDecrementButton.setOnTouchListener(mTouchListener);
+
         //Adding their onClickListeners
         mIncrementButton.setOnClickListener(new View.OnClickListener() {
             @Override
